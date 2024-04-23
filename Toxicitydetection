@@ -1,0 +1,32 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+# Sample dataset (replace this with your actual dataset)
+data = {
+    'comment': ['This is a great article!', 'You are so stupid.', 'I disagree with your point of view.',
+                'You should be ashamed of yourself.'],
+    'toxicity': [0, 1, 0, 1]  # 0: Non-toxic, 1: Toxic
+}
+df = pd.DataFrame(data)
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(df['comment'], df['toxicity'], test_size=0.2, random_state=42)
+
+# TF-IDF vectorization
+tfidf_vectorizer = TfidfVectorizer()
+X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
+X_test_tfidf = tfidf_vectorizer.transform(X_test)
+
+# Train a logistic regression classifier
+clf = LogisticRegression()
+clf.fit(X_train_tfidf, y_train)
+
+# Predict on test data
+y_pred = clf.predict(X_test_tfidf)
+
+# Evaluate performance
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
